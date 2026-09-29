@@ -1,225 +1,208 @@
-# mkfolders
+# 📁 FolderCreator (`mkfolders`)
 
-A simple and lightweight Rust CLI tool for creating multiple folders at once.
+A modern, fast, and interactive CLI tool built in Rust for scaffolding directory structures in seconds.
 
-Instead of repeatedly using `mkdir`, `mkfolders` lets you create multiple directories with a single command.
+Instead of typing `mkdir` repeatedly, **FolderCreator** lets you enter folders interactively with a visual tree preview or batch-create them from command-line arguments. Everything defaults to your **current terminal directory**, with zero tedious configuration.
 
-The folders are created relative to your **current terminal location**, so you can use the command from any drive or directory.
+---
 
-## Features
+## ✨ Features
 
-* Create multiple folders with one command
-* Automatically uses the current working directory
-* Supports nested directories
-* Works with Windows paths and drives
-* Built with Rust
-* Lightweight and fast
+- **⚡ Streamlined Interactive Mode**: Enter folder names one by one (`Folder #1:`, `Folder #2:`). Typing `q` or pressing Enter on a blank line **immediately auto-creates** the folders.
+- **🌳 Visual ASCII Tree Preview**: See the exact directory hierarchy before disk operations begin.
+- **📊 Animated Progress & Summary**: Live progress bar with spinners powered by `indicatif`, followed by a color-coded creation summary card.
+- **📂 Zero Path Questions**: Automatically targets your current working directory (`env::current_dir()`).
+- **🚀 CLI Batch Scriptability**: Run `mkfolders src docs tests` for instant non-interactive creation.
+- **🛡️ Path Sanitization**: Automatically normalizes forward/backward slashes and strips illegal Windows filename characters (`< > : " | ? *`).
+- **🪟 File Explorer Shortcut**: Option to open the target folder in Windows File Explorer right from the terminal.
+- **🧱 Modular Rust Codebase**: Clean separation across `tree`, `creator`, `interactive`, `cli`, and `ui` modules.
 
-## Example
+---
 
-If your current directory is:
+## 🚀 Quick Start & Installation
 
-```text
-D:\Khorn
+### Option 1: Automated Install (Recommended)
+
+Run the included [`install.ps1`](file:///C:/Tool/FolderCreator/install.ps1) script in PowerShell:
+
+```powershell
+# In C:\Tool\FolderCreator
+.\install.ps1
 ```
 
-Run:
+The installer will:
+
+1. Compile the optimized release binary (`target\release\FolderCreator.exe`).
+2. Link [`profile.ps1`](file:///C:/Tool/FolderCreator/profile.ps1) to your PowerShell `$PROFILE` so `mkfolders` and `foldercreator` are globally available.
+3. Add the release folder to your User `PATH` environment variable.
+
+Reload your PowerShell session:
+
+```shell
+. $PROFILE
+```
+
+---
+
+### Option 2: Manual Installation
+
+#### 1. Build the Release Binary
+
+```shell
+cargo build --release
+```
+
+The executable will be located at:
+
+```text
+C:\Tool\FolderCreator\target\release\FolderCreator.exe
+```
+
+#### 2. Add to PowerShell Profile
+
+Open your PowerShell profile:
+
+```shell
+notepad $PROFILE
+```
+
+Add this snippet to the file:
+
+```shell
+function mkfolders {
+    & "C:\Tool\FolderCreator\target\release\FolderCreator.exe" @args
+}
+Set-Alias -Name foldercreator -Value mkfolders -ErrorAction SilentlyContinue
+```
+
+Reload your profile:
+
+```shell
+. $PROFILE
+```
+
+---
+
+## 💻 Usage
+
+### 1. Interactive Mode
+
+Run `mkfolders` with no arguments:
+
+```shell
+mkfolders
+```
+
+#### Interactive Walkthrough
+
+```text
+╔═════════════════════════════════════════════════════════════╗
+║                    📁 FOLDER CREATOR                        ║
+║          Fast, modern & interactive directory builder       ║
+╚═════════════════════════════════════════════════════════════╝
+
+⚡ Interactive Mode
+📂 Target directory: C:\Projects\MyApp
+Enter folder names one by one (type 'q' or press Enter to auto-create):
+
+Folder #1: src/controllers
+  ✓ Added 'src/controllers' (Total: 1)
+Folder #2: src/models
+  ✓ Added 'src/models' (Total: 2)
+Folder #3: docs/api
+  ✓ Added 'docs/api' (Total: 3)
+Folder #4: q
+
+┌─────────────────────────────────────────────────────────────┐
+│                    STRUCTURE PREVIEW                        │
+└─────────────────────────────────────────────────────────────┘
+📂 Base: C:\Projects\MyApp
+
+├── 📁 docs
+│   └── 📁 api
+└── 📁 src
+    ├── 📁 controllers
+    └── 📁 models
+
+📊 Total folders to create: 3
+
+🚀 Creating folders...
+[██████████████████████████████] 3/3 Processing docs/api
+
+╔═════════════════════════════════════════════════════════════╗
+║                      CREATION SUMMARY                       ║
+╚═════════════════════════════════════════════════════════════╝
+  📂 Target Directory: C:\Projects\MyApp
+  ✨ Newly Created:    3
+  ℹ  Already Existed:  0
+  ✖  Failed:           0
+
+  Created Folders:
+    ✓ docs/api
+    ✓ src/controllers
+    ✓ src/models
+
+? Open target folder in Windows File Explorer? (y/N)
+```
+
+---
+
+### 2. Command-Line Arguments Mode
+
+You can also pass folders directly as arguments:
 
 ```powershell
 mkfolders src components pages services utils
 ```
 
-The result will be:
+#### Nested Folders
+
+Deep paths are created automatically:
+
+```shell
+mkfolders src/components/ui src/services/api docs/architecture
+```
+
+#### Help Flag
+
+```shell
+mkfolders --help
+```
+
+---
+
+## 📁 Project Architecture
+
+The codebase is organized into modular Rust files:
 
 ```text
-D:\Khorn
-├── src
-├── components
-├── pages
-├── services
-└── utils
-```
-
-If you move to another directory:
-
-```powershell
-cd C:\Desktop
-```
-
-You can run the same command:
-
-```powershell
-mkfolders src components pages
-```
-
-And the folders will be created in:
-
-```text
-C:\Desktop
-├── src
-├── components
-└── pages
-```
-
-## Nested Folders
-
-`mkfolders` also supports nested directories.
-
-```powershell
-mkfolders src/components/ui src/components/layout src/services/api src/utils
-```
-
-This creates:
-
-```text
-src/
-├── components/
-│   ├── ui/
-│   └── layout/
-├── services/
-│   └── api/
-└── utils/
-```
-
-Parent directories are automatically created when necessary.
-
-## Installation
-
-### 1. Clone the repository
-
-```powershell
-git clone https://github.com/KhornVictor/mkfolders.git
-cd mkfolders
-```
-
-### 2. Build the project
-
-```powershell
-cargo build --release
-```
-
-The executable will be generated at:
-
-```text
-target\release\mkfolders.exe
-```
-
-## Add to PowerShell
-
-You can place the executable somewhere permanent, for example:
-
-```text
-C:\Tool\mkfolders\mkfolders.exe
-```
-
-Then add the following function to your PowerShell profile.
-
-Open your profile:
-
-```powershell
-notepad $PROFILE
-```
-
-Add:
-
-```powershell
-function mkfolders {
-    & "C:\Tool\mkfolders\mkfolders.exe" @args
-}
-```
-
-Save the file and reload your profile:
-
-```powershell
-. $PROFILE
-```
-
-Now you can use:
-
-```powershell
-mkfolders src components services
-```
-
-from anywhere.
-
-## How It Works
-
-The program gets the terminal's current working directory using Rust's:
-
-```rust
-std::env::current_dir()
-```
-
-It then combines that path with each folder name:
-
-```rust
-let path = current_path.join(&folder);
-```
-
-Finally, it creates the directory using:
-
-```rust
-fs::create_dir_all(&path);
-```
-
-`create_dir_all()` is used so nested directories can be created automatically.
-
-## Usage
-
-```text
-mkfolders <folder1> <folder2> <folder3> ...
-```
-
-### Basic
-
-```powershell
-mkfolders src
-```
-
-### Multiple folders
-
-```powershell
-mkfolders src components services utils
-```
-
-### Nested folders
-
-```powershell
-mkfolders src/components/ui src/services/api public/images
-```
-
-## Example Output
-
-```text
-Location: D:\Khorn
-
-Created: D:\Khorn\src
-Created: D:\Khorn\components
-Created: D:\Khorn\services
-Created: D:\Khorn\utils
-```
-
-## Requirements
-
-* Windows
-* Rust
-* Cargo
-* PowerShell
-
-You can install Rust from the official Rust website:
-
-[Rust](https://www.rust-lang.org/)
-
-## Project Structure
-
-```text
-mkfolders/
-├── Cargo.toml
-├── Cargo.lock
+FolderCreator/
+├── Cargo.toml          # Project dependencies (inquire, colored, indicatif)
+├── install.ps1         # Automated Windows PowerShell installer
+├── profile.ps1         # Shell function & alias loader for $PROFILE
+├── README.md           # Documentation
 └── src/
-    └── main.rs
+    ├── main.rs         # Application entry point & CLI vs Interactive router
+    ├── interactive.rs  # Interactive prompt loop (auto-creates on 'q')
+    ├── cli.rs          # Command-line argument handling & help output
+    ├── creator.rs      # Folder sanitization, creation loop & summary stats
+    ├── tree.rs         # Hierarchical tree builder & ASCII tree renderer
+    └── ui.rs           # Terminal banners, summary card & Explorer integration
 ```
 
-## License
+---
 
-This project is open source and can be used, modified, and distributed freely.
+## 🔧 Requirements
+
+- **OS**: Windows 10/11
+- **Rust & Cargo**: [rustup.rs](https://rustup.rs) (Rust 1.70+)
+- **PowerShell**: Windows PowerShell 5.1 or PowerShell 7+
+
+---
+
+## 🗑️ Uninstallation
+
+If you ever wish to remove the tool:
+
+1. Open your profile with `notepad $PROFILE` and remove the `FolderCreator` / `mkfolders` block.
+2. Delete the `C:\Tool\FolderCreator` directory.
