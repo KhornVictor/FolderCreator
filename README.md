@@ -208,7 +208,7 @@ Created: D:\Khorn\utils
 
 You can install Rust from the official Rust website:
 
-https://www.rust-lang.org/
+[Rust](https://www.rust-lang.org/)
 
 ## Project Structure
 
