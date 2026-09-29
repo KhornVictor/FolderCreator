@@ -25,7 +25,7 @@ Instead of typing `mkdir` repeatedly, **FolderCreator** lets you enter folders i
 
 Open PowerShell and paste this single command:
 
-```powershell
+```shell
 irm https://raw.githubusercontent.com/KhornVictor/FolderCreator/main/install.ps1 | iex
 ```
 
@@ -43,7 +43,7 @@ This will automatically:
 
 If you have already cloned the repository:
 
-```powershell
+```shell
 # Inside C:\Tool\FolderCreator
 .\install.ps1
 ```
