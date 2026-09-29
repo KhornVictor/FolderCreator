@@ -21,30 +21,36 @@ Instead of typing `mkdir` repeatedly, **FolderCreator** lets you enter folders i
 
 ## 🚀 Quick Start & Installation
 
-### Option 1: Automated Install (Recommended)
+### Option 1: One-Liner Install (PowerShell `irm`)
 
-Run the included [`install.ps1`](file:///C:/Tool/FolderCreator/install.ps1) script in PowerShell:
+Open PowerShell and paste this single command:
 
 ```powershell
-# In C:\Tool\FolderCreator
-.\install.ps1
+irm https://raw.githubusercontent.com/KhornVictor/FolderCreator/main/install.ps1 | iex
 ```
 
-The installer will:
+This will automatically:
 
-1. Compile the optimized release binary (`target\release\FolderCreator.exe`).
-2. Link [`profile.ps1`](file:///C:/Tool/FolderCreator/profile.ps1) to your PowerShell `$PROFILE` so `mkfolders` and `foldercreator` are globally available.
-3. Add the release folder to your User `PATH` environment variable.
+1. Download or clone the latest source code.
+2. Build the optimized release binary using Cargo.
+3. Configure your PowerShell `$PROFILE` with `mkfolders` and `foldercreator`.
+4. Add the binary to your User `PATH`.
+5. Load it into your current terminal immediately.
 
-Reload your PowerShell session:
+---
 
-```shell
-. $PROFILE
+### Option 2: Local Automated Install
+
+If you have already cloned the repository:
+
+```powershell
+# Inside C:\Tool\FolderCreator
+.\install.ps1
 ```
 
 ---
 
-### Option 2: Manual Installation
+### Option 3: Manual Installation
 
 #### 1. Build the Release Binary
 

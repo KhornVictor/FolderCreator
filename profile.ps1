@@ -2,6 +2,12 @@ $script:FolderCreatorExe = "$PSScriptRoot\target\release\FolderCreator.exe"
 if (-not (Test-Path $script:FolderCreatorExe)) {
     $script:FolderCreatorExe = "C:\Tool\FolderCreator\target\release\FolderCreator.exe"
 }
+if (-not (Test-Path $script:FolderCreatorExe)) {
+    $cmd = Get-Command FolderCreator.exe -ErrorAction SilentlyContinue
+    if ($cmd) {
+        $script:FolderCreatorExe = $cmd.Source
+    }
+}
 
 function mkfolders {
     param(
