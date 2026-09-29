@@ -1,31 +1,23 @@
+mod cli;
+mod creator;
+mod interactive;
+mod tree;
+mod ui;
+
 use std::env;
-use std::fs;
 
 fn main() {
-    let current_dir = env::current_dir() {
-        Ok(path) => path,
-        Err(e) => {
-            eprintln!("Failed to get current directory: {}", e);
-            return;
-        }
-    };
+    #[cfg(windows)]
+    colored::control::set_virtual_terminal(true).ok();
 
-    let folders: Vec<String> = env::args().skip(1).collect();
+    ui::print_banner();
 
-    if folders.is_empty() {
-        println!("Usages: mkfolders <folder1> <folder2> ...");
-        return;
-    }   
+    let current_dir = env::current_dir().expect("Failed to get current directory");
+    let args: Vec<String> = env::args().skip(1).collect();
 
-    println!("Creating folders in: {}", current_dir.display());
-
-    for folder in folders {
-        let path = current_dir.join(&folder);
-
-        match fs::create_dir_all(&path) {
-            Ok(_) => println!("Created folder: {}", path.display()),
-            Err(error) => eprintln!("Failed to create folder {}: {}", path.display(), error),
-        }
+    if !args.is_empty() {
+        cli::handle_cli_args(&current_dir, &args);
+    } else {
+        interactive::run_interactive_mode(&current_dir);
     }
-
 }
